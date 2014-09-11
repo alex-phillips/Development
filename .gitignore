@@ -10,5 +10,5 @@ app/public/Config/httpd
 .DS_Store
 
 # Composer
+composer.lock
 app/vendor
-Primer/vendor
