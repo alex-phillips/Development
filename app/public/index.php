@@ -6,14 +6,14 @@
  * @license http://opensource.org/licenses/MIT MIT License
  */
 
-define('ROOT', dirname(dirname(__FILE__)));
+define('ROOT', dirname(dirname(dirname(__FILE__))));
 
 $domain = str_replace('www.', '', $_SERVER['SERVER_NAME']);
 if (file_exists(ROOT . '/app/Config/' . $domain . '.php')) {
     require_once(ROOT . '/app/Config/' . $domain . '.php');
 }
 else {
-    require_once(ROOT . '/Config/config.php');
+    require_once(ROOT . '/app/Config/config.php');
 }
 
 // checking for minimum PHP version
