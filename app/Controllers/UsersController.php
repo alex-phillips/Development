@@ -5,6 +5,7 @@ class UsersController extends AppController
     public function beforeFilter()
     {
         Auth::allow(array(
+            'index',
             'login',
             'logout',
             'view',
@@ -18,7 +19,7 @@ class UsersController extends AppController
 
     public function login()
     {
-        $this->view->title = 'Login';
+        View::set('itle', 'Login');
         // Redirect if user is already logged in
         if (Session::isUserLoggedIn()) {
             Router::redirect('/');
@@ -95,7 +96,6 @@ class UsersController extends AppController
     public function logout()
     {
         Auth::logout();
-        setcookie('rememberme', false, time() - (3600 * 3650), '/', DOMAIN);
         Router::redirect('/');
     }
 
@@ -127,8 +127,8 @@ class UsersController extends AppController
 
         Primer::setValue('rendering_object', $this->User);
 
-        $this->view->title = $this->User->username;
-        $this->view->set('user', $this->User);
+        View::set('title', $this->User->username);
+        View::set('user', $this->User);
     }
 
     public function edit($id = null)
@@ -144,14 +144,14 @@ class UsersController extends AppController
         }
 
         $this->User = $this->User->findById($id);
-        $this->view->title = 'Edit ' . $this->User->username . '\'s Account';
+        View::set('title', 'Edit ' . $this->User->username . '\'s Account');
 
         if ($this->User->id == '') {
             Session::setFlash('User does not exist', 'failure');
             Router::redirect('/');
         }
 
-        $this->view->set('user', $this->User);
+        View::set('user', $this->User);
 
         if (Request::is('post')) {
             // Some form SPECIFIC validation
@@ -219,7 +219,7 @@ class UsersController extends AppController
     // TODO: need this function to define captcha. find a way to integrate this into register()
     public function add()
     {
-        $this->view->title = 'Register';
+        View::set('title', 'Register');
 
         if (Request::is('post')) {
             // Check Captcha
@@ -295,7 +295,7 @@ class UsersController extends AppController
 
     public function forgot_password()
     {
-        $this->view->title = 'Request Password Reset';
+        View::set('title', 'Request Password Reset');
         if (Request::is('post')) {
             $username = htmlentities(Request::post()->get('data.user.username'), ENT_QUOTES, 'utf-8');
             $users = $this->User->find(array(
@@ -303,6 +303,10 @@ class UsersController extends AppController
                     'username' => $username
                 )
             ));
+            if (empty($users)) {
+                Session::setFlash("That user doesn't exist", 'failure');
+                Router::redirect('referrer');
+            }
             $this->User = $users[0];
             if ($this->User) {
                 $timestamp = time();
@@ -324,37 +328,18 @@ class UsersController extends AppController
 
     private function _sendPasswordResetMail()
     {
-        $mail = new PHPMailer;
-        // use SMTP or use mail()
-        if (EMAIL_USE_SMTP) {
-            $mail->IsSMTP(); // Set mailer to use SMTP
-            $mail->Host = EMAIL_SMTP_HOST; // Specify main and backup server
-            $mail->SMTPAuth = EMAIL_SMTP_AUTH; // Enable SMTP authentication
-            $mail->Username = EMAIL_SMTP_USERNAME; // SMTP username
-            $mail->Password = EMAIL_SMTP_PASSWORD; // SMTP password
-
-            if (EMAIL_SMTP_ENCRYPTION) {
-                $mail->SMTPSecure = EMAIL_SMTP_ENCRYPTION; // Enable encryption, 'ssl' also accepted
-            }
-        }
-        else {
-            $mail->IsMail();
-        }
-
-        $mail->From = 'noreply@wootables.com';
-        $mail->FromName = 'noreply@wootables.com';
-        $mail->AddAddress($this->User->email);
-        $mail->Subject = 'Password Reset for wootables.com';
-
         $link = 'http://www.wootables.com/users/verifypasswordrequest/' . urlencode($this->User->username) . '/' . urlencode($this->User->password_reset_hash);
-        $mail->Body = 'Please click on this link to reset your password: <a href="' . $link . '">' . $link . '</a>';
+        $body = 'Please click on this link to reset your password: <a href="' . $link . '">' . $link . '</a>';
 
-        if (!$mail->Send()) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return Mail::send(
+            array(
+                'from'      => 'noreply@wootables.com',
+                'fromName'  => 'noreply@wootables.com',
+                'to' => $this->User->email,
+                'subject'   => 'Password Reset for wootables.com',
+                'body'      => $body,
+            )
+        );
     }
 
     public function reset_password($username, $verification_code)
@@ -397,8 +382,8 @@ class UsersController extends AppController
                 $timestamp_one_hour_ago = time() - 3600;
 
                 if ($this->User->password_reset_timestamp > $timestamp_one_hour_ago) {
-                    $this->view->set('username', $this->User->username);
-                    $this->view->set('password_reset_hash', $this->User->password_reset_hash);
+                    View::set('username', $this->User->username);
+                    View::set('password_reset_hash', $this->User->password_reset_hash);
                     return;
                 } else {
                     Session::setFlash('Your reset link has expired. Please try again.');
