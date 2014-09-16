@@ -4,7 +4,7 @@ require.config({
         'jquery-ui': '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min',
         'bootstrap': '//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min',
         'underscore': '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min',
-        'mmenu': 'vendor/jquery.mmenu/umd/jquery.mmenu.umd.all',
+        'mmenu': 'vendor/jquery_plugins/jquery.mmenu/umd/jquery.mmenu.umd.all',
         'modernizr': 'vendor/modernizr',
         'prism': 'vendor/prism'
     },
