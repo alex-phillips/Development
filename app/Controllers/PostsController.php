@@ -6,23 +6,24 @@ class PostsController extends AppController
     public $name = 'post';
 
     // Override default config for pagination
-    protected $_paginationConfig = array(
+    public $paginationConfig = array(
         'perPage' => 2,
         'instance' => 'p'
     );
 
     public function beforeFilter()
     {
-        Auth::allow(array(
-            'index',
-            'view',
-            'quotes',
-        ));
+        Auth::allow(
+            array(
+                'index',
+                'view',
+                'quotes',
+            )
+        );
     }
 
     public function index()
     {
-        $this->view->title = 'Home';
         $params = array(
             'type' => 'post',
         );
@@ -32,24 +33,12 @@ class PostsController extends AppController
             $params['no_publish'] = 0;
         }
 
-        //get number of total records
-        $total = $this->Post->findCount($params);
-
-        //pass number of records to
-        $this->view->paginator->set_total($total);
-
-        $this->view->set('posts', $this->Post->find(array(
-            'conditions' => array(
-                'AND' => $params
-            ),
-            'order' => array('created DESC'),
-            'limit' => $this->view->paginator->get_limit(),
-        )));
+        View::set('title', 'Home');
+        View::set('posts', View::paginate('Post', array('AND' => $params)));
     }
 
     public function my_posts()
     {
-        $this->view->title = 'My Posts';
         $params = array(
             'type' => 'post',
         );
@@ -59,26 +48,18 @@ class PostsController extends AppController
             $params['id_user'] = Session::read('Auth.id');
         }
 
-        //get number of total records
-        $total = $this->Post->findCount($params);
-
-        //pass number of records to
-        $this->view->paginator->set_total($total);
-
-        $this->view->set('posts', $this->Post->find(array(
-            'conditions' => array(
-                'id_user' => Session::read('Auth.id')
-            ),
-            'order' => array('created DESC'),
-            'limit' => $this->view->paginator->get_limit(),
-        )));
-        $this->view->render('posts/index');
+        View::set('posts', View::paginate(
+            'Post',
+            array('id_user' => Session::read('Auth.id'))
+        ));
+        View::set('title', 'My Posts');
+        View::render('posts.index');
     }
 
     public function add()
     {
-        $this->view->set('title', 'New Post');
-        $this->view->addJS('posts/add');
+        View::set('title', 'New Post');
+        View::addJS('posts/add');
 
         if (Request::is('post')) {
 
@@ -94,7 +75,6 @@ class PostsController extends AppController
                 return;
             }
         }
-        $this->view->render('posts/add');
     }
 
     public function view($id)
@@ -120,19 +100,20 @@ class PostsController extends AppController
             Router::redirect('/posts/');
         }
 
-        $this->view->set('post', $this->Post);
-        Primer::setValue('rendering_object', $this->Post);
-
-        $this->view->title = $this->Post->title;
-        $this->view->set('subtitle', date('F d, Y', strtotime($this->Post->created)));
-        $this->view->render('posts/view');
+        View::set(
+            array(
+                'post'     => $this->Post,
+                'title'    => $this->Post->title,
+                'subtitle' => date('F d, Y', strtotime($this->Post->created)),
+            )
+        );
     }
 
     public function edit($id)
     {
-        $this->view->title = 'Edit Post';
+        View::set('title', 'Edit Post');
 
-        $this->view->addJS('posts/edit');
+        View::addJS('posts/edit');
         $this->Post->set($this->Post->findById($id));
 
         if ($this->Post->id == '') {
@@ -164,8 +145,7 @@ class PostsController extends AppController
         }
 
         Primer::setJSValue('post', $this->Post);
-        $this->view->set('post', $this->Post);
-        $this->view->render('posts/edit');
+        View::set('post', $this->Post);
     }
 
     public function delete($id = null)
@@ -181,8 +161,7 @@ class PostsController extends AppController
             }
         }
         else if (Session::isAdmin()) {
-            $this->view->set('post', $this->Post->findById($id));
-            $this->view->render('posts/delete');
+            View::set('post', $this->Post->findById($id));
         }
         else {
             Session::setFlash('You are not authorized to delete posts', 'warning');
