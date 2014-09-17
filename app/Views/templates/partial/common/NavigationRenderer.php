@@ -28,7 +28,7 @@ class NavigationRenderer
     {
         $leftNav = self::buildLinks(self::$_config['left_nav']);
         $rightNav = self::buildLinks(self::$_config['right_nav']);
-        $siteName = SITE_NAME;
+        $siteName = Config::get('app.site_name');
         return <<<__TEXT__
             <div class="navbar navbar-default hidden-xs" role="navigation" style="margin-bottom: 0;">
                 <div class="navbar-header">
