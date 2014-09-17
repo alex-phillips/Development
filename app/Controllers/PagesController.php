@@ -9,6 +9,7 @@ class PagesController extends AppController
     public function movies()
     {
         if (isset($_REQUEST['ajax'])) {
+            View::set('template', 'ajax');
             $movies = file_get_contents(APP_ROOT . '/public/content/movies.json');
             $movies = json_decode($movies);
 
@@ -48,24 +49,12 @@ __TEXT__;
             if (!$markup) {
                 $markup = '<h2>No results found</h2>';
             }
-            echo $markup;
-            exit;
+
+            View::set('content', $markup);
         }
-        $this->view->addJS('pages/movies');
-        $this->view->title = 'Movies';
-        $this->view->render('pages/movies');
+        else {
+            View::addJS('pages/movies');
+            View::set('title', 'Movies');
+        }
     }
-
-    public function movies_bootstrap()
-    {
-        $this->view->addJS('angular/bootstrap');
-        $this->view->title = 'Movies';
-        $this->view->render('pages/movies_bootstrap');
-    }
-
-    public function tv_shows()
-    {
-        $this->view->render('pages/tv_shows');
-    }
-	
 }
