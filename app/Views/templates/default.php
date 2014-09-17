@@ -10,7 +10,7 @@ require_once('Views/templates/partial/common/NavigationRenderer.php');
     <div id="mobile-nav-header" class="visible-xs">
         <div class="left-menu"></div>
         <div class="site-name">
-            <a href="/"><?php echo SITE_NAME; ?></a>
+            <a href="/"><?php echo Config::get('app.site_name'); ?></a>
         </div>
         <div class="right-menu"></div>
     </div>
