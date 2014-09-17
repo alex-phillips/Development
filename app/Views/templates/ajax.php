@@ -1,3 +1,3 @@
 <?php
 
-$this->getContents();
+echo $this->content;
