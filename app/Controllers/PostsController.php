@@ -7,8 +7,11 @@ class PostsController extends AppController
 
     // Override default config for pagination
     public $paginationConfig = array(
-        'perPage' => 2,
-        'instance' => 'p'
+        'perPage' => 5,
+        'instance' => 'p',
+        'order' => array(
+            'created DESC',
+        ),
     );
 
     public function beforeFilter()
