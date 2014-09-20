@@ -244,7 +244,7 @@ class UsersController extends AppController
             // generate random hash for email verification (40 char string)
             Request::post()->set('data.user.activation_hash', sha1(uniqid(mt_rand(), true)));
 
-            $this->User = new User(Request::post()->get('data.user'));
+            $this->User = User::create(Request::post()->get('data.user'));
 
             if ($this->User->save()) {
                 Session::setFlash('An activation e-mail has been sent', 'success');

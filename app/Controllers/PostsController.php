@@ -2,7 +2,6 @@
 
 class PostsController extends AppController
 {
-    /* @var $model Post */
     public $name = 'post';
 
     // Override default config for pagination
@@ -71,7 +70,7 @@ class PostsController extends AppController
             // Set currently signed-in user as creator
             Request::post()->set('data.post.id_user', Session::read('Auth.id'));
 
-            $post = new Post(Request::post()->get('data.post'));
+            $post = Post::create(Request::post()->get('data.post'));
             if ($post->save()) {
                 Session::setFlash('Post created successfully', 'success');
                 Router::redirect('/posts/');
