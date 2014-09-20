@@ -8,7 +8,7 @@ if ($this->posts) {
         if ($this->Session->read('Auth.role') === 'admin') {
             $edit_link = '<a href="/posts/edit/' . $post->id . '">Edit</a>';
         }
-        $date = date('F d, Y', strtotime($post->created));
+        $date = $post->modified->diffForHumans();
         $panel = 'panel-default';
         if ($post->no_publish == 1) {
             $panel = 'panel-danger';
