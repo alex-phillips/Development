@@ -22,17 +22,17 @@ class UsersController extends AppController
         View::set('itle', 'Login');
         // Redirect if user is already logged in
         if (Session::isUserLoggedIn()) {
-            Router::redirect('/');
+            Response::redirect('/');
         }
 
         if (Request::is('post')) {
             if (!Request::post()->get('data.user.username')) {
                 Session::setFlash('Username cannot be left blank', 'failure');
-                Router::redirect('/users/login/');
+                Response::redirect('/users/login/');
             }
             if (!Request::post()->get('data.user.password')) {
                 Session::setFlash('Password cannot be left blank', 'failure');
-                Router::redirect('/users/login/');
+                Response::redirect('/users/login/');
             }
 
             $users = $this->User->find(array(
@@ -42,18 +42,18 @@ class UsersController extends AppController
             ));
             if (empty($users)) {
                 Session::setFlash('Username or password is incorrect', 'failure');
-                Router::redirect('/users/login/');
+                Response::redirect('/users/login/');
             }
             $this->User = array_shift($users);
 
             if ($this->User->id == '') {
                 Session::setFlash('Username or password is incorrect', 'failure');
-                Router::redirect('/users/login/');
+                Response::redirect('/users/login/');
             }
 
             if (Security::verifyHash(Request::post()->get('data.user.password'), $this->User->password) === false) {
                 Session::setFlash('Username or password is incorrect', 'failure');
-                Router::redirect('/users/login/');
+                Response::redirect('/users/login/');
             }
 
             if ($this->User->active == 1) {
@@ -76,19 +76,19 @@ class UsersController extends AppController
                     $cookie_string = base64_encode($cookie_string_first_part . ':' . $cookie_string_hash);
 
                     // set cookie (2 weeks)
-                    setcookie('rememberme', $cookie_string, time() + 1209600, "/", DOMAIN);
+                    Response::setCookie(Cookie::make('rememberme', $cookie_string, time() + 1209600, "/"));
                 }
 
                 Session::setFlash('Welcome, ' . $this->User->username, 'success');
 
                 if ($referrer = Request::query()->get('forward_to')) {
-                    Router::redirect($referrer);
+                    Response::redirect($referrer);
                 }
-                Router::redirect('/');
+                Response::redirect('/');
             }
             else {
                 Session::setFlash("Your account is not activated yet. Please click on the confirm link in the mail.", 'warning');
-                Router::redirect('/users/login/');
+                Response::redirect('/users/login/');
             }
         }
     }
@@ -96,13 +96,13 @@ class UsersController extends AppController
     public function logout()
     {
         Auth::logout();
-        Router::redirect('/');
+        Response::redirect('/');
     }
 
     public function view($id = null)
     {
         if ($id == null) {
-            Router::redirect('/users/view/' . Session::read('Auth.id'));
+            Response::redirect('/users/view/' . Session::read('Auth.id'));
         }
 
         if (is_numeric($id)) {
@@ -118,7 +118,7 @@ class UsersController extends AppController
 
         if (!$this->User) {
             Session::setFlash("That user does not exist", 'failure');
-            Router::redirect('/');
+            Response::redirect('/');
         }
 
         if ($this->User->id == '') {
@@ -135,12 +135,12 @@ class UsersController extends AppController
     {
         // If no ID is passed, use currently logged in user
         if ($id == null) {
-            Router::redirect('/users/edit/' . Session::read('Auth.id'));
+            Response::redirect('/users/edit/' . Session::read('Auth.id'));
         }
 
         if ($id != Session::read('Auth.id') && !Session::isAdmin()) {
             Session::setFlash("You are not authorized to edit that user", 'failure');
-            Router::redirect('/users/index');
+            Response::redirect('/users/index');
         }
 
         $this->User = $this->User->findById($id);
@@ -148,7 +148,7 @@ class UsersController extends AppController
 
         if ($this->User->id == '') {
             Session::setFlash('User does not exist', 'failure');
-            Router::redirect('/');
+            Response::redirect('/');
         }
 
         View::set('user', $this->User);
@@ -184,7 +184,7 @@ class UsersController extends AppController
             // either BOTH need to equal, or make the SQL query on the one we check...
             if ($id != Request::post()->get('data.user.id')) {
                 Session::setFlash('User IDs do not match. Please try again.', 'failure');
-                Router::redirect('/users/edit/' . $id);
+                Response::redirect('/users/edit/' . $id);
             }
 
             // Attempt to update the user in the database
@@ -194,11 +194,11 @@ class UsersController extends AppController
                 $this->User = $this->User->findById($id);
                 Auth::login($this->User);
                 Session::setFlash('Your account has been successfully updated', 'success');
-                Router::redirect('/users/view/' . $id);
+                Response::redirect('/users/view/' . $id);
             }
             else {
                 Session::setFlash($this->User->errors, 'failure');
-                Router::redirect('/users/edit/' . $id);
+                Response::redirect('/users/edit/' . $id);
             }
 
         }
@@ -211,7 +211,7 @@ class UsersController extends AppController
     {
         if (Request::is('post') && Session::isAdmin()) {
             $this->User->deleteById(Request::post()->get('data.user.id'));
-            Router::redirect('/users/');
+            Response::redirect('/users/');
         }
     }
 
@@ -248,11 +248,11 @@ class UsersController extends AppController
 
             if ($this->User->save()) {
                 Session::setFlash('An activation e-mail has been sent', 'success');
-                Router::redirect('/posts/');
+                Response::redirect('/posts/');
             }
             else {
                 Session::setFlash('There was a problem creating the user. Please try again.', 'failure');
-                Router::redirect('/users/add');
+                Response::redirect('/users/add');
             }
         }
     }
@@ -290,7 +290,7 @@ class UsersController extends AppController
             }
         }
 
-        Router::redirect('/posts/');
+        Response::redirect('/posts/');
     }
 
     public function forgot_password()
@@ -305,7 +305,7 @@ class UsersController extends AppController
             ));
             if (empty($users)) {
                 Session::setFlash("That user doesn't exist", 'failure');
-                Router::redirect('referrer');
+                Response::redirect('referrer');
             }
             $this->User = $users[0];
             if ($this->User) {
@@ -316,11 +316,11 @@ class UsersController extends AppController
                 if ($this->_sendPasswordResetMail() == true) {
                     $this->User->save();
                     Session::setFlash('Your new password has been emailed to you.', 'success');
-                    Router::redirect('/');
+                    Response::redirect('/');
                 }
                 else {
                     Session::setFlash('There was a problem sending you your reset password. Please contact webmaster', 'failure');
-                    Router::redirect('/');
+                    Response::redirect('/');
                 }
             }
         }
@@ -359,7 +359,7 @@ class UsersController extends AppController
                         $this->User->password_reset_timestamp = null;
                         $this->User->save();
                         Session::setFlash('Your password has been successfully updated', 'success');
-                        Router::redirect('/');
+                        Response::redirect('/');
                     }
                 }
             }
@@ -387,11 +387,11 @@ class UsersController extends AppController
                     return;
                 } else {
                     Session::setFlash('Your reset link has expired. Please try again.');
-                    Router::redirect('/login/');
+                    Response::redirect('/login/');
                 }
             }
             else {
-                Router::redirect('/');
+                Response::redirect('/');
             }
         }
     }

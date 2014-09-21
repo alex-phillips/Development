@@ -73,7 +73,7 @@ class PostsController extends AppController
             $post = Post::create(Request::post()->get('data.post'));
             if ($post->save()) {
                 Session::setFlash('Post created successfully', 'success');
-                Router::redirect('/posts/');
+                Response::redirect('/posts/');
                 return;
             }
         }
@@ -95,11 +95,11 @@ class PostsController extends AppController
 
         if ($this->Post->id == '') {
             Session::setFlash('That post does not exist', 'failure');
-            Router::redirect('/posts/');
+            Response::redirect('/posts/');
         }
         if (($this->Post->no_publish && !Session::isAdmin()) && $this->Post->id_user !== Session::read('Auth.id')) {
             Session::setFlash('That post does not exist', 'failure');
-            Router::redirect('/posts/');
+            Response::redirect('/posts/');
         }
 
         View::set(
@@ -120,12 +120,12 @@ class PostsController extends AppController
 
         if ($this->Post->id == '') {
             Session::setFlash('That post does not exist', 'failure');
-            Router::redirect('/posts/');
+            Response::redirect('/posts/');
         }
 
         if ($this->Post->id_user != Session::read('Auth.id') && !Session::isAdmin()) {
             Session::setFlash('You are not authorized to edit that post', 'warning');
-            Router::redirect('/posts/');
+            Response::redirect('/posts/');
         }
 
         // TODO: better way to go about doing this, for security reasons. For ALL models...
@@ -133,17 +133,17 @@ class PostsController extends AppController
         // either BOTH need to equal, or make the SQL query on the one we check...
         if (Request::post()->get('data.post.id') && $id != Request::post()->get('data.post.id')) {
             Session::setFlash('Post IDs do not match. Please try again.', 'failure');
-            Router::redirect('/posts/edit/' . $id);
+            Response::redirect('/posts/edit/' . $id);
         }
 
         if (Request::is('post')) {
             $this->Post->set(Request::post()->get('data.post'));
             if ($this->Post->save()) {
                 Session::setFlash('Post was updated successfully', 'success');
-                Router::redirect('/posts/view/' . $id);
+                Response::redirect('/posts/view/' . $id);
             }
             Session::setFlash('There was a problem updating the post', 'failure');
-            Router::redirect('/posts/edit/' . $id);
+            Response::redirect('/posts/edit/' . $id);
         }
 
         Primer::setJSValue('post', $this->Post);
@@ -155,11 +155,11 @@ class PostsController extends AppController
         if (Request::is('post') && Session::isAdmin()) {
             if ($this->Post->deleteById($id)) {
                 Session::setFlash('Post has been successfully deleted', 'success');
-                Router::redirect('/');
+                Response::redirect('/');
             }
             else {
                 Session::setFlash('There was a problem deleting that post', 'failure');
-                Router::redirect('/');
+                Response::redirect('/');
             }
         }
         else if (Session::isAdmin()) {
@@ -167,7 +167,7 @@ class PostsController extends AppController
         }
         else {
             Session::setFlash('You are not authorized to delete posts', 'warning');
-            Router::redirect('/');
+            Response::redirect('/');
         }
     }
 
