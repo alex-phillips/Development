@@ -5,6 +5,7 @@ app/public/css/sass/.sass-cache
 app/public/Config/config.php
 app/public/Config/codersmanifesto.com.php
 app/public/Config/httpd
+app/logs
 
 # DS_Store
 .DS_Store
