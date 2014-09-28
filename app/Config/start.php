@@ -23,3 +23,7 @@ set_include_path(APP_ROOT);
 date_default_timezone_set('America/New_York');
 
 require_once(APP_ROOT . '/../vendor/autoload.php');
+
+$app = new \Primer\Core\Application();
+
+return $app;
