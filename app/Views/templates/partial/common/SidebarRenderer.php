@@ -41,7 +41,7 @@ class SidebarRenderer
         return <<<__TEXT__
             <h5>Links</h5>
             <ul class="side-nav">
-                <li><a href="https://github.com/exonintrendo/PrimerPHP">PrimerPHP</a></li>
+                <li><a href="https://github.com/exonintrendo/Primer">PrimerPHP</a></li>
             </ul>
 
             <div class="panel panel-default">
