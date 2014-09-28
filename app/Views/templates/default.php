@@ -81,7 +81,7 @@ require_once('Views/templates/partial/common/NavigationRenderer.php');
         <footer class="row">
             <div class="col-lg-12">
                 <hr />
-                <p>© Alex Phillips 2014</p>
+                <p>Powered by Primer © Alex Phillips 2014</p>
             </div>
         </footer>
     </div>
