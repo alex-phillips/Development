@@ -20,12 +20,12 @@ class BackupDatabaseCommand extends \Primer\Console\BaseCommand
         $this->_user = 'root';
         $this->_password = 'applepie';
         $this->_db = 'primer';
-
-        $this->_connection = new PDO("mysql:host={$this->_host};dbname={$this->_db}", $this->_user, $this->_password);
     }
 
     public function run()
     {
+        $this->_connection = new PDO("mysql:host={$this->_host};dbname={$this->_db}", $this->_user, $this->_password);
+
         $output = <<<__TEXT__
 --
 -- Database: `{$this->_db}`
