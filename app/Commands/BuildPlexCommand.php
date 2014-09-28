@@ -1,35 +1,46 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: exonintrendo
+ * Date: 9/27/14
+ * Time: 10:55 PM
+ */
 
-require_once(__DIR__ . '/../Config/config.php');
-
-buildData::run();
-
-class buildData
+class BuildPlexCommand extends \Primer\Console\BaseCommand
 {
-    private static $_movies_src = 'http://127.0.0.1:32400/library/sections/1/all';
-    private static $_tv_shows_src = 'http://127.0.0.1:32400/library/sections/2/all';
-    private static $_rotten_tomatoes_api = 'http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=4tcdm6p46y23yhkfzzu2nre5';
+    private $_moviesSrc = 'http://127.0.0.1:32400/library/sections/1/all';
+    private $_tvShowsSrc = 'http://127.0.0.1:32400/library/sections/2/all';
+    private $_rottenTomatoesApi = 'http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=4tcdm6p46y23yhkfzzu2nre5';
 
-    public static function run()
+    public function configure()
     {
-        self::build_movies();
-        self::build_tv_shows();
+        $this->setDescription("Build JSON encoded strucuture of movie information from the Plex API.");
     }
 
-    private static function build_movies()
+    public function run()
     {
-        $data = file_get_contents(self::$_movies_src);
+        $this->buildMovies();
+        $this->buildTvShows();
+    }
+
+    private function buildMovies()
+    {
+        $data = file_get_contents($this->_moviesSrc);
         $data = json_decode(json_encode((array)simplexml_load_string($data)));
         $movie_info = array();
         $count = 0;
+
+        $progress = $this->getHelper('ProgressBar');
+        $progress->initialize($this->getStdout(), count($data->Video));
         foreach($data->Video as $movie) {
+            $progress->increment();
             $info = array();
             $info[] = (isset($movie->{"@attributes"}->title) ? $movie->{"@attributes"}->title : '');
             $info[] = (isset($movie->{"@attributes"}->year) ? $movie->{"@attributes"}->year : '');
             $info[] = (isset($movie->{"@attributes"}->contentRating) ? $movie->{"@attributes"}->contentRating : '');
             $info['poster'] = '';
 
-            $api_information = json_decode(file_get_contents(self::$_rotten_tomatoes_api . '&q=' . str_replace(' ', '+', $movie->{"@attributes"}->title) . '&page_limit=1'));
+            $api_information = json_decode(file_get_contents($this->_rottenTomatoesApi . '&q=' . str_replace(' ', '+', $movie->{"@attributes"}->title) . '&page_limit=1'));
 
             if (isset($api_information->movies[0]->posters->original)) {
                 $image = $api_information->movies[0]->posters->detailed;
@@ -75,9 +86,9 @@ class buildData
         file_put_contents(APP_ROOT . '/public/content/movies.json', json_encode($movie_info));
     }
 
-    private static function build_tv_shows()
+    private function buildTvShows()
     {
-        $data = file_get_contents(self::$_tv_shows_src);
+        $data = file_get_contents($this->_tvShowsSrc);
         $data = json_decode(json_encode((array)simplexml_load_string($data)));
         $show_info  = array();
         foreach($data->Directory as $show) {
