@@ -1,19 +1,12 @@
 <?php
 /**
- * @author Alex Phillips
- * Date: 4/5/14
- * Time: 11:48 AM
+ * Created by PhpStorm.
+ * User: exonintrendo
+ * Date: 9/28/14
+ * Time: 3:07 PM
  */
 
-$backup = new backup_database(array(
-    'host'     => '127.0.0.1',
-    'user'     => 'root',
-    'password' => 'applepie',
-    'db'       => 'primer',
-));
-$backup->backup();
-
-class backup_database
+class BackupDatabaseCommand extends \Primer\Console\BaseCommand
 {
     private $_host;
     private $_user;
@@ -21,17 +14,17 @@ class backup_database
     private $_db;
     private $_connection;
 
-    public function __construct($config)
+    public function configure()
     {
-        $this->_host = $config['host'];
-        $this->_user = $config['user'];
-        $this->_password = $config['password'];
-        $this->_db = $config['db'];
+        $this->_host = '127.0.0.1';
+        $this->_user = 'root';
+        $this->_password = 'applepie';
+        $this->_db = 'primer';
 
         $this->_connection = new PDO("mysql:host={$this->_host};dbname={$this->_db}", $this->_user, $this->_password);
     }
 
-    public function backup()
+    public function run()
     {
         $output = <<<__TEXT__
 --
