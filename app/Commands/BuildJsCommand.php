@@ -12,6 +12,7 @@ class BuildJsCommand extends \Primer\Console\BaseCommand
 
     public function configure()
     {
+        $this->setDescription("Compile JavaScript using r.js");
         $this->_jsPath = APP_ROOT . '/public/js';
     }
 
