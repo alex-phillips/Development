@@ -16,5 +16,6 @@ $console->addCommand(new BuildPlexCommand(), array('plex:build'));
 $console->addCommand(new PullSpotifyFeedCommand(), array('spotify:pull_feed'));
 $console->addCommand(new BuildJsCommand(), array('js:build'));
 $console->addCommand(new BackupDatabaseCommand(), array('database:backup'));
+$console->addCommand(new MonitorCommand(), array('css:monitor'));
 
 $console->run();
