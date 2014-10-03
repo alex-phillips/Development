@@ -15,6 +15,7 @@ class MonitorCommand extends \Primer\Console\BaseCommand
 
     public function configure()
     {
+        $this->setDescription("Monitors a directory and runs a specified command when files change");
         $this->addParameter('w', 'watch', \Primer\Console\Input\DefinedInput::VALUE_REQUIRED);
         $this->addParameter('p', 'path', \Primer\Console\Input\DefinedInput::VALUE_REQUIRED);
         $this->addParameter('c', 'command', \Primer\Console\Input\DefinedInput::VALUE_REQUIRED);
