@@ -1,38 +1,43 @@
 <?php
 /**
- * @author Alex Phillips
- * Date: 3/12/14
- * Time: 5:16 PM
+ * @author Alex Phillips <exonintrendo@gmail.com>
+ * Date: 10/2/14
+ * Time: 8:11 PM
  */
-
-require_once(__DIR__ . '/../Config/config.php');
-
-$config = array(
-    'watch_path' => APP_ROOT . '/public/css/sass/sass/',
-    'command_path' => APP_ROOT . '/public/css/sass/',
-    'command' => 'compass compile',
-);
-
-$monitor = new files_monitor($config);
-$monitor->run();
-
-class files_monitor
+class MonitorCommand extends \Primer\Console\BaseCommand
 {
-    private $_watch_path;
-    private $_command_path;
+    private $_watchPath;
+    private $_commandPath;
     private $_command;
 
     private $_files = array();
     private $_changes = false;
 
-    public function __construct($config)
+    public function configure()
     {
-        $this->_watch_path = $config['watch_path'];
-        $this->_command_path = $config['command_path'];
-        $this->_command = $config['command'];
+        $this->addParameter('w', 'watch', \Primer\Console\Input\DefinedInput::VALUE_REQUIRED);
+        $this->addParameter('p', 'path', \Primer\Console\Input\DefinedInput::VALUE_REQUIRED);
+        $this->addParameter('c', 'command', \Primer\Console\Input\DefinedInput::VALUE_REQUIRED);
+    }
 
+    public function run()
+    {
+        $this->_watchPath = rtrim($this->getParameterValue('w'), '/') . '/';
+        $this->_commandPath = rtrim($this->getParameterValue('p'), '/') . '/';
+        $this->_command = $this->getParameterValue('c');
+
+        $this->init();
+
+        while (true) {
+            $this->checkFiles();
+            sleep(1);
+        }
+    }
+
+    private function init()
+    {
         // Get files initial md5
-        $path = realpath($this->_watch_path);
+        $path = realpath($this->_watchPath);
         $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), RecursiveIteratorIterator::SELF_FIRST);
         foreach ($files as $file) {
             /* @var $file SplFileInfo */
@@ -45,22 +50,14 @@ class files_monitor
         }
 
         echo "\nStarting\n";
-        echo "Monitoring $this->_watch_path to run $this->_command...\n";
-    }
-
-    public function run()
-    {
-        while (true) {
-            $this->checkFiles();
-            sleep(1);
-        }
+        echo "Monitoring $this->_watchPath to run $this->_command...\n";
     }
 
     private function checkFiles()
     {
         $this->_changes = false;
         $xary = array();
-        $path = realpath($this->_watch_path);
+        $path = realpath($this->_watchPath);
         $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), RecursiveIteratorIterator::SELF_FIRST);
         foreach ($files as $file) {
             /* @var $file SplFileInfo */
@@ -85,16 +82,17 @@ class files_monitor
                 echo "\n >> New file $fileName\n";
             }
         }
-        foreach($this->_files as $deleted => $hash) {
+        foreach ($this->_files as $deleted => $hash) {
             echo "\n >> Deleted file $deleted\n";
             $this->_changes = true;
         }
 
         if ($this->_changes == true) {
             echo "Running {$this->_command}\n";
-            `cd {$this->_command_path}; {$this->_command};`;
+            `cd {$this->_commandPath}; {$this->_command};`;
             echo "Done.\n\n";
         }
+
         $this->_files = $xary;
     }
 }
