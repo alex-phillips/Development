@@ -20,7 +20,7 @@ return array(
     'site_name'       => 'Primer',
 
     /*
-     * Enviroment - this determines which database
+     * Envirnoment - this determines which database
      */
     'environment'     => 'test',
 
