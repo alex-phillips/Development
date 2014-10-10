@@ -7,7 +7,7 @@
 
 class AppController extends \Primer\Controller\Controller
 {
-    protected $_components = array(
+    public $components = array(
         'Session',
         'Auth',
     );
