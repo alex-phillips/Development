@@ -19,7 +19,7 @@ class UsersController extends AppController
 
     public function login()
     {
-        View::set('itle', 'Login');
+        View::set('title', 'Login');
         // Redirect if user is already logged in
         if (Session::isUserLoggedIn()) {
             Response::redirect('/');
