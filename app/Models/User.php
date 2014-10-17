@@ -72,15 +72,21 @@ class User extends App
     protected function afterSave()
     {
         if (Router::getAction() === 'add') {
-            return Mail::send(array(
+            return Mail::send(
+                array(
                     'from' => 'noreply@wootables.com',
                     'fromName' => 'noreply@wootables.com',
-                    'recipients' => array(
+                    'to' => array(
                         $this->email,
                     ),
                     'subject' => 'Account Activation at Wootables.com',
-                    'body' => 'Welcome to wootables.com! Please click on this link to activate your account: http://www.wootables.com/users/verify/' . urlencode($this->email) . '/' . urlencode($this->activation_hash),
-                ));
+                    'body' =>
+                        'Welcome to wootables.com! Please click on this link to activate your account: http://www.wootables.com/users/verify/'
+                        . urlencode($this->email) . '/' . urlencode(
+                            $this->activation_hash
+                        ),
+                )
+            );
         }
 
         return true;
