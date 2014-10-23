@@ -13,3 +13,4 @@ app/logs
 # Composer
 composer.lock
 app/vendor
+app/public/components
