@@ -33,7 +33,7 @@ __TEXT__;
                 <h3><a href="/post/$post->slug">$post->title</a></h3>
                 <h6>$date</h6>
                 <p>$body</p>
-                <a href="/post/"$post->slug">Read More</a>
+                <a href="/post/$post->slug">Read More</a>
                 $admin_links
             </article>
             <hr/>
