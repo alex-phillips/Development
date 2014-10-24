@@ -21,13 +21,11 @@ require_once('Views/templates/partial/common/NavigationRenderer.php');
                 <div class="row">
                     <div class="col-md-12">
                         <h1><?php echo $this->title ?></h1>
-                        <h4>
-                            <?php
-                            if (isset($this->subtitle)) {
-                                echo $this->subtitle;
-                            }
-                            ?>
-                        </h4>
+                        <?php
+                        if (isset($this->subtitle)) {
+                            echo "<h4>$this->subtitle</h4>";
+                        }
+                        ?>
                     </div>
                 </div>
             </div>
