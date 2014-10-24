@@ -37,6 +37,7 @@ class SidebarRenderer
             }
             $markup .= '<li><a href="/posts/view/' . $post->id . '">' . $post->title . '</a></li>';
         }
+        $markup .= '</ul>';
 
         return <<<__TEXT__
             <h5>Links</h5>
