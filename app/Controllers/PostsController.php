@@ -8,6 +8,7 @@ class PostsController extends AppController
     public $paginationConfig = array(
         'perPage' => 5,
         'instance' => 'p',
+        'query' => 'q',
         'order' => array(
             'created DESC',
         ),
