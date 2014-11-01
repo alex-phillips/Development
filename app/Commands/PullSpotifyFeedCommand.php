@@ -10,6 +10,7 @@ class PullSpotifyFeedCommand extends \Primer\Console\BaseCommand
 {
     public function configure()
     {
+        $this->setName('spotify:pull_feed');
         $this->setDescription("Pull Spotify feed from Last.FM based on provided username");
         $this->addParameter('u', 'username', \Primer\Console\Input\DefinedInput::VALUE_REQUIRED);
     }

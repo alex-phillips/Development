@@ -14,6 +14,7 @@ class BuildPlexCommand extends \Primer\Console\BaseCommand
 
     public function configure()
     {
+        $this->setName('plex:build');
         $this->setDescription("Build JSON encoded strucuture of movie information from the Plex API.");
     }
 

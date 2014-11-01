@@ -20,6 +20,8 @@ class BackupDatabaseCommand extends \Primer\Console\BaseCommand
         $this->_user = 'root';
         $this->_password = 'applepie';
         $this->_db = 'primer';
+
+        $this->setName('database:backup_schema');
     }
 
     public function run()
