@@ -9,14 +9,24 @@
 
 require_once('./app/Config/start.php');
 
-$console = new \Primer\Console\Console('Prime', '0.1');
-$console->addCommand(new \Primer\Console\DownCommand(), array('down'));
-$console->addCommand(new \Primer\Console\UpCommand(), array('up'));
+$programName = <<<__TEXT__
+ __________        .__
+\______   \_______|__| _____   ___________
+ |     ___/\_  __ \  |/     \_/ __ \_  __ \
+ |    |     |  | \/  |  Y Y  \  ___/|  | \/
+ |____|     |__|  |__|__|_|  /\___  >__|
+                           \/     \/
+<info>Prime</info> version <warning>0.1</warning>
+__TEXT__;
 
-$console->addCommand(new BuildPlexCommand(), array('plex:build'));
-$console->addCommand(new PullSpotifyFeedCommand(), array('spotify:pull_feed'));
-$console->addCommand(new BuildJsCommand(), array('js:build'));
-$console->addCommand(new MonitorCommand(), array('css:monitor'));
-$console->addCommand(new BackupDatabaseCommand(), array('database:backup'));
+$console = new \Primer\Console\Console($programName);
+$console->addCommand(new \Primer\Console\DownCommand());
+$console->addCommand(new \Primer\Console\UpCommand());
+
+$console->addCommand(new BuildPlexCommand());
+$console->addCommand(new PullSpotifyFeedCommand());
+$console->addCommand(new BuildJsCommand());
+$console->addCommand(new MonitorCommand());
+$console->addCommand(new BackupDatabaseCommand());
 
 $console->run();
