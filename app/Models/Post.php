@@ -2,6 +2,8 @@
 
 class Post extends App
 {
+    public static $belongsTo = 'User';
+
     protected static $_validate = array(
         'title' => array(
             'required' => array(
