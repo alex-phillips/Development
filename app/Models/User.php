@@ -11,6 +11,8 @@ class User extends App
         9 => 'Administrator',
     );
 
+    public static $hasMany = 'Post';
+
     protected static $_validate = array(
         'email' => array(
             'required' => array(
