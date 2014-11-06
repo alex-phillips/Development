@@ -5,7 +5,7 @@
  * Time: 1:23 PM
  */
 
-class PersistentObject extends App
+class PersistentObject extends AppModel
 {
     public static function create($params = array())
     {

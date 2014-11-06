@@ -1,8 +1,8 @@
 <?php
 
-class Post extends App
+class Post extends AppModel
 {
-    public static $belongsTo = 'User';
+    protected static $_belongsTo = 'User';
 
     protected static $_validate = array(
         'title' => array(

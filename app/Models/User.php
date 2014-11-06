@@ -4,14 +4,14 @@
  * class Login_Model
  * handles the user's users, logout, username editing, password changing...
  */
-class User extends App
+class User extends AppModel
 {
     private $_roles = array(
         1 => 'User',
         9 => 'Administrator',
     );
 
-    public static $hasMany = 'Post';
+    protected static $_hasMany = 'Post';
 
     protected static $_validate = array(
         'email' => array(
