@@ -36,11 +36,11 @@ class PersistentObject extends AppModel
 
     public function getData()
     {
-        return unserialize($this->data['value']);
+        return unserialize($this->value);
     }
 
     public function setData($data)
     {
-        $this->data['value'] = serialize($data);
+        $this->value = serialize($data);
     }
 }
