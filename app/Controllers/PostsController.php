@@ -6,11 +6,8 @@ class PostsController extends AppController
 
     // Override default config for pagination
     public $paginationConfig = array(
-        'perPage' => 5,
-        'instance' => 'p',
-        'query' => 'q',
         'order' => array(
-            'created DESC',
+            'Post.created DESC',
         ),
     );
 
@@ -64,20 +61,52 @@ class PostsController extends AppController
         View::set('title', 'New Post');
         View::addJS('posts/add');
 
-        if (Request::is('post')) {
+        $form = Form::create('add');
 
-            Request::post()->set('data.post.id_user', Session::read('Auth.id'));
+        $form->add('label', 'label_type', 'type', 'Type');
+        $obj = $form->add('select', 'type');
+        $options = array();
+        foreach (Post::$types as $type) {
+            $options[$type] = $type;
+        }
+        $obj->add_options($options);
+        $obj->setRule(
+            array(
+                'required' => array('error', 'Please select a post type'),
+            )
+        );
 
+        $checked = $this->Post->no_publish ? array('checked' => 'checked') : array();
+        $obj = $form->add('checkbox', 'no_publish', '1', $checked);
+        $form->add('label', 'label_no_publish', 'no_publish_1', 'No publish');
+
+        $form->add('label', 'label_title', 'title', 'Title');
+        $obj = $form->add('text', 'title');
+        $obj->setRule(array(
+                'required' => array('error', 'Please include a title'),
+            ));
+
+        $form->add('label', 'label_body', 'body', 'Body');
+        $obj = $form->add('textarea', 'body');
+        $obj->setRule(array(
+                'required' => array('error', 'Please include a a body'),
+            ));
+
+        $form->add('submit', 'btnsubmit', 'Save');
+
+        if ($form->validate()) {
+
+            $post = Post::create(Request::post()->getAll());
             // Set currently signed-in user as creator
-            Request::post()->set('data.post.id_user', Session::read('Auth.id'));
+            $post->id_user = Session::read('Auth.id');
 
-            $post = Post::create(Request::post()->get('data.post'));
             if ($post->save()) {
                 Session::setFlash('Post created successfully', 'success');
                 Response::redirect('/posts/');
-                return;
             }
         }
+
+        View::set('form', $form);
     }
 
     public function view($id)
@@ -117,9 +146,9 @@ class PostsController extends AppController
         View::set('title', 'Edit Post');
 
         View::addJS('posts/edit');
-        $this->Post->set($this->Post->findById($id));
+        $this->Post = Post::findById($id);
 
-        if ($this->Post->id == '') {
+        if (!$this->Post) {
             Session::setFlash('That post does not exist', 'failure');
             Response::redirect('/posts/');
         }
@@ -137,24 +166,61 @@ class PostsController extends AppController
             Response::redirect('/posts/edit/' . $id);
         }
 
-        if (Request::is('post')) {
-            $this->Post->set(Request::post()->get('data.post'));
+        $form = Form::create('edit');
+
+        $form->add('label', 'label_type', 'type', 'Type');
+        $obj = $form->add('select', 'type', $this->Post->type);
+        $options = array();
+        foreach (Post::$types as $type) {
+            $options[$type] = $type;
+        }
+        $obj->add_options($options);
+        $obj->setRule(
+            array(
+                'required' => array('error', 'Please select a post type'),
+            )
+        );
+
+        $checked = $this->Post->no_publish ? array('checked' => 'checked') : array();
+        $obj = $form->add('checkbox', 'no_publish', '1', $checked);
+        $form->add('label', 'label_no_publish', 'no_publish_1', 'No publish');
+
+        $form->add('label', 'label_title', 'title', 'Title');
+        $obj = $form->add('text', 'title', $this->Post->title);
+        $obj->setRule(array(
+                'required' => array('error', 'Please include a title'),
+            ));
+
+        $form->add('label', 'label_body', 'body', 'Body');
+        $obj = $form->add('textarea', 'body', $this->Post->body);
+        $obj->setRule(array(
+                'required' => array('error', 'Please include a a body'),
+            ));
+
+        $form->add('submit', 'btnsubmit', 'Save');
+
+        if ($form->validate()) {
+            $this->Post->set(Request::post()->getAll());
             if ($this->Post->save()) {
                 Session::setFlash('Post was updated successfully', 'success');
                 Response::redirect('/posts/view/' . $id);
             }
             Session::setFlash('There was a problem updating the post', 'failure');
-            Response::redirect('/posts/edit/' . $id);
         }
 
         Primer::setJSValue('post', $this->Post);
+        View::set('form', $form);
         View::set('post', $this->Post);
     }
 
     public function delete($id = null)
     {
-        if (Request::is('post') && Session::isAdmin()) {
-            if ($this->Post->deleteById($id)) {
+        $form = Form::create('delete');
+        $form->add('hidden', 'id', $id);
+        $form->add('submit', 'btnsubmit', 'Delete Post');
+
+        if ($form->validate() && Session::isAdmin()) {
+            if (PostdeleteById($id)) {
                 Session::setFlash('Post has been successfully deleted', 'success');
                 Response::redirect('/');
             }
@@ -164,7 +230,7 @@ class PostsController extends AppController
             }
         }
         else if (Session::isAdmin()) {
-            View::set('post', $this->Post->findById($id));
+            View::set('post', Post::findById($id));
         }
         else {
             Session::setFlash('You are not authorized to delete posts', 'warning');
