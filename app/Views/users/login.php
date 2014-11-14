@@ -1,18 +1,5 @@
 <?php
-
-Form::create('users');
-Form::add('username', array(
-        'label' => 'Username',
-    ));
-Form::add('password', array(
-        'label' => 'Password',
-    ));
-Form::add('rememberme', array(
-        'label' => 'Remember Me',
-        'type' => 'checkbox',
-    ));
-Form::end();
-
+$this->form->render();
 ?>
 
 <a href="/register/">Register</a>
