@@ -1,6 +1,6 @@
 <?php
-require_once('Views/templates/partial/common/doc_head.php');
-require_once('Views/templates/partial/common/NavigationRenderer.php');
+$this->fetch('templates/partial/common/doc_head.php');
+$this->fetch('templates/partial/common/NavigationRenderer.php');
 ?>
 
 <nav id="mobile-nav" hidden>
@@ -20,10 +20,10 @@ require_once('Views/templates/partial/common/NavigationRenderer.php');
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <h1><?php echo $this->title ?></h1>
+                        <h1><?php echo $title ?></h1>
                         <?php
-                        if (isset($this->subtitle)) {
-                            echo "<h4>$this->subtitle</h4>";
+                        if (isset($subtitle)) {
+                            echo "<h4>$subtitle</h4>";
                         }
                         ?>
                     </div>
@@ -39,7 +39,7 @@ require_once('Views/templates/partial/common/NavigationRenderer.php');
 
         <div class="row">
             <div class="col-sm-12">
-                <?php echo $this->flash(); ?>
+                <?php echo Session::flash(); ?>
             </div>
         </div>
 
@@ -50,7 +50,7 @@ require_once('Views/templates/partial/common/NavigationRenderer.php');
 
                 <!--  Flash Messages  -->
                 <?php
-                $this->getContents();
+                $this->fetch('content');
                 if (isset($this->paginator)) {
                     echo $this->paginator->page_links_list();
                 }
@@ -64,8 +64,7 @@ require_once('Views/templates/partial/common/NavigationRenderer.php');
             <!-- Sidebar -->
             <div class="col-sm-3">
                 <?php
-                require_once('Views/templates/partial/common/SidebarRenderer.php');
-                echo sidebarRenderer::render();
+                echo $this->build('templates/partial/common/SidebarRenderer.php');
                 ?>
             </div>
 
@@ -85,4 +84,4 @@ require_once('Views/templates/partial/common/NavigationRenderer.php');
     </div>
 </div>
 
-<?php require_once('Views/templates/partial/common/doc_tail.php'); ?>
+<?php $this->fetch('templates/partial/common/doc_tail.php'); ?>
