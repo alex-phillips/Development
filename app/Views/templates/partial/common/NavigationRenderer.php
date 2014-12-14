@@ -69,14 +69,8 @@ __TEXT__;
     {
         $divider = $addDividers ? '<li class="divider hidden-xs"></li>' : '';
 
-        $dropdownElement = 'a';
-        $dropdownHref = 'href="#"';
-        if ($mobile === true) {
-            $dropdownElement = 'span';
-            $dropdownHref = '';
-        }
-
         $dropdownElement = $mobile ? 'span' : 'a';
+        $dropdownHref = $mobile ? '' : 'href="#"';
         $markup = $divider;
         foreach ($config as $label => $info) {
             $label = preg_replace_callback('#\{\{(.+?)\}\}#', array('self', 'handleSpecialCases'), $label);
@@ -96,10 +90,18 @@ __TEXT__;
                     }
                 }
                 else {
+                    $dropdownClass = '';
+                    $dropdownMenuClass = '';
+                    $additionalAttrs = '';
+                    if (!$mobile) {
+                        $dropdownClass = 'class="dropdown"';
+                        $dropdownMenuClass = 'class="dropdown-menu"';
+                        $additionalAttrs = 'class="dropdown-toggle" data-toggle="dropdown" $dropdownHref';
+                    }
                     $markup .= <<<__TEXT__
-                   <li class="dropdown">
-                        <$dropdownElement class="dropdown-toggle" data-toggle="dropdown" $dropdownHref>$label <b class="caret hidden-xs"></b></$dropdownElement>
-                        <ul class="dropdown-menu">
+                   <li $dropdownClass>
+                        <$dropdownElement $additionalAttrs $dropdownHref>$label <b class="caret hidden-xs"></b></$dropdownElement>
+                        <ul $dropdownMenuClass>
 __TEXT__;
 
                     $markup .= self::buildLinks($info, false);
