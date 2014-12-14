@@ -4,6 +4,10 @@ class Post extends AppModel
 {
     protected static $_belongsTo = 'User';
 
+    public static $types = array(
+        'post',
+    );
+
     protected static $_validate = array(
         'title' => array(
             'required' => array(

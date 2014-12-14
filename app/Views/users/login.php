@@ -1,5 +1,5 @@
 <?php
-$this->form->render();
+$form->render();
 ?>
 
 <a href="/register/">Register</a>

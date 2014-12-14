@@ -64,7 +64,7 @@ class User extends AppModel
             $this->password = Security::hash($this->password);
         }
 
-        if (!isset($this->avatar) || !$this->avatar) {
+        if (!$this->avatar) {
             $this->avatar = $this->_getGravatarImageUrl($this->email);
         }
 
@@ -73,7 +73,7 @@ class User extends AppModel
 
     protected function afterSave()
     {
-        if (Router::getAction() === 'add') {
+        if (Request::getAction() === 'add') {
             return Mail::send(
                 array(
                     'from' => 'noreply@wootables.com',

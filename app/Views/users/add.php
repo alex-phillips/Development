@@ -1,2 +1,2 @@
 <?php
-$this->form->render();
+$form->render();

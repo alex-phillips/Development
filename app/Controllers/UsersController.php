@@ -19,22 +19,20 @@ class UsersController extends AppController
 
     public function login()
     {
-        View::set('title', 'Login');
+        $this->set('title', 'Login');
         // Redirect if user is already logged in
-        if ($this->Session->isUserLoggedIn()) {
+        if (Session::isUserLoggedIn()) {
             Response::redirect('/');
         }
 
         $form = Form::create('login');
-        $form->assetsPath(APP_ROOT . '/public/libs/Form/', '/libs/Form/');
-        $form->add('label', 'label_username', 'username', 'Username');
-        $obj = $form->add('text', 'username', '', array('autocompete' => 'off'));
+
+        $obj = $form->text('username', 'Username', '', array('autocompete' => 'off'));
         $obj->setRule(array(
                 'required' => array('error', 'Please enter your username'),
             ));
 
-        $form->add('label', 'label_password', 'password', 'Password');
-        $obj = $form->add('password', 'password', '', array('autocompete' => 'off'));
+        $obj = $form->password('password', 'Password', '', array('autocompete' => 'off'));
         $obj->setRule(array(
                 'required' => array('error', 'Please enter your password'),
             ));
@@ -42,7 +40,7 @@ class UsersController extends AppController
         $form->add('checkbox', 'rememberme', 'yes');
         $form->add('label', 'label_rememberme', 'rememberme_yes', 'Remember Me', array('style' => 'font-weight:normal'));
 
-        $form->add('submit', 'btnsubmit', 'Login');
+        $form->submit('btnsubmit', 'Login');
 
         if ($form->validate()) {
             $this->User = $this->User->findFirst(array(
@@ -62,7 +60,7 @@ class UsersController extends AppController
 
                         Request::post()->set('rememberme_token', $random_token_string);
                         Request::post()->Set('id', $this->User->id);
-                        $this->User->set(Request::post()->getAll());
+                        $this->User = User::create(Request::post()->getAll());
                         $this->User->save();
 
                         // generate cookie string that consists of userid, randomstring and combined hash of both
@@ -90,7 +88,7 @@ class UsersController extends AppController
             }
         }
 
-        View::set('form', $form);
+        $this->set('form', $form);
     }
 
     public function logout()
@@ -123,8 +121,8 @@ class UsersController extends AppController
 
         Primer::setValue('rendering_object', $this->User);
 
-        View::set('title', $this->User->username);
-        View::set('user', $this->User);
+        $this->set('title', $this->User->username);
+        $this->set('user', $this->User);
     }
 
     public function edit($id = null)
@@ -140,7 +138,7 @@ class UsersController extends AppController
         }
 
         $this->User = User::findById($id);
-        View::set('title', 'Edit ' . $this->User->username . '\'s Account');
+        $this->set('title', 'Edit ' . $this->User->username . '\'s Account');
 
         if ($this->User->id == '') {
             Session::setFlash('User does not exist', 'failure');
@@ -148,22 +146,19 @@ class UsersController extends AppController
         }
 
         $form = Form::create('user_edit');
-        $form->add('hidden', 'id', $this->User->id);
-        $form->add('label', 'label_email', 'email', 'Email');
-        $obj = $form->add('text', 'email', $this->User->email);
+        $form->hidden('id', $this->User->id);
+
+        $obj = $form->text('email', 'Email', $this->User->email);
         $obj->setRule(array(
                 'required' => array('error', 'Please enter your email address'),
                 'email' => array('error', 'Please enter a valid email address'),
             ));
 
-        $form->add('label', 'label_name', 'name', 'Name');
-        $obj = $form->add('text', 'name', $this->User->name);
+        $obj = $form->text('name', 'Name', $this->User->name);
 
-        $form->add('label', 'label_bio', 'bio', 'Bio');
-        $obj = $form->add('textarea', 'bio', $this->User->bio);
+        $obj = $form->textarea('bio', 'Bio', $this->User->bio);
 
-        $form->add('label', 'label_profile_image', 'profile_image', 'Profile Picture');
-        $obj = $form->add('file', 'profile_image', '', array(
+        $obj = $form->file('profile_image', 'Profile Image', array(
                 'disabled' => 'disabled'
             )
         );
@@ -184,18 +179,16 @@ class UsersController extends AppController
         );
 
         $form->add('label', 'label_current_password', 'current_password', 'Current Password');
-        $obj = $form->add('password', 'current_password');
+        $obj = $form->password('current_password', 'Current Password');
         $obj->setRule(array(
                 'required' => array('error', 'Please enter your current password to save changes'),
             ));
 
-        $form->add('label', 'label_new_password1', 'new_password1', 'New Password');
-        $obj = $form->add('password', 'new_password1');
+        $obj = $form->password('new_password1', 'New Password');
 
-        $form->add('label', 'label_new_password2', 'new_password2', 'Repeat New Password');
-        $obj = $form->add('password', 'new_password2');
+        $obj = $form->password('new_password2', 'Repeat New Password');
 
-        $form->add('submit', 'btnsubmit', 'Save Changes');
+        $form->submit('btnsubmit', 'Save Changes');
 
         if ($form->validate()) {
             // Some form SPECIFIC validation
@@ -238,7 +231,7 @@ class UsersController extends AppController
             }
         }
 
-        View::set('form', $form);
+        $this->set('form', $form);
         // Set default text in textarea to current bio
         Primer::setJSValue('bio', $this->User->bio, 'user');
     }
@@ -255,31 +248,27 @@ class UsersController extends AppController
     // TODO: need this function to define captcha. find a way to integrate this into register()
     public function add()
     {
-        View::set('title', 'Register');
+        $this->set('title', 'Register');
 
         $form = Form::create('add');
 
-        $form->add('label', 'label_username', 'username', 'Username');
-        $obj = $form->add('text', 'username');
+        $obj = $form->text('username', 'Username');
         $obj->setRule(array(
                 'required' => array('error', 'Username is required'),
             ));
 
-        $form->add('label', 'label_email', 'email', 'Email Address');
-        $obj = $form->add('text', 'email');
+        $obj = $form->text('email', 'Email');
         $obj->setRule(array(
                 'required' => array('error', 'Email address is required'),
                 'email' => array('error', 'Please enter a valid email address'),
             ));
 
-        $form->add('label', 'label_password1', 'password1', 'Password');
-        $obj = $form->add('password', 'password1');
+        $obj = $form->password('password1', 'Password');
         $obj->setRule(array(
                 'required' => array('error', 'Please enter a password'),
             ));
 
-        $form->add('label', 'label_password2', 'password2', 'Repeat Password');
-        $obj = $form->add('password', 'password2');
+        $obj = $form->password('password2', 'Repeat Password');
         $obj->setRule(array(
                 'required' => array('error', 'Please repeat your password'),
             ));
@@ -289,13 +278,13 @@ class UsersController extends AppController
         $form->add('captcha', 'captcha_image', 'captcha_code');
         $form->add('label', 'label_captcha_code', 'captcha_code', 'Are you human?');
         $obj = $form->add('text', 'captcha_code');
-        $form->add('note', 'note_captcha', 'captcha_code', 'You must enter the characters with black color that stand out from the other characters', array('style'=>'width: 200px'));
+        $form->add('note', 'note_captcha', 'captcha_code', 'You must enter the characters with black color that stand out from the other characters');
         $obj->setRule(array(
                 'required'  => array('error', 'Enter the characters from the image above!'),
                 'captcha'   => array('error', 'Characters from image entered incorrectly!')
             ));
 
-        $form->add('submit', 'btnsubmit', 'Register');
+        $form->submit('btnsubmit', 'Register');
 
         if ($form->validate()) {
             if (Request::post()->get('password1') !== Request::post()->get('password2')) {
@@ -320,7 +309,7 @@ class UsersController extends AppController
             }
         }
 
-        View::set('form', $form);
+        $this->set('form', $form);
     }
 
     /**
@@ -361,16 +350,16 @@ class UsersController extends AppController
 
     public function forgot_password()
     {
-        View::set('title', 'Request Password Reset');
+        $this->set('title', 'Request Password Reset');
 
         $form = Form::create('users');
-        $form->add('label', 'label_username', 'username', 'Username');
-        $obj = $form->add('text', 'username');
+
+        $obj = $form->text('username', 'Username');
         $obj->setRule(array(
                 'required' => array('error', 'Please enter your username'),
             ));
 
-        $form->add('submit', 'btnsubmit', 'Reset Password');
+        $form->submit('btnsubmit', 'Reset Password');
 
         if ($form->validate()) {
             $username = htmlentities(Request::post()->get('username'), ENT_QUOTES, 'utf-8');
@@ -402,7 +391,7 @@ class UsersController extends AppController
             Response::redirect('/');
         }
 
-        View::set('form', $form);
+        $this->set('form', $form);
     }
 
     private function _sendPasswordResetMail()
@@ -461,8 +450,8 @@ class UsersController extends AppController
                 $timestamp_one_hour_ago = time() - 3600;
 
                 if ($this->User->password_reset_timestamp > $timestamp_one_hour_ago) {
-                    View::set('username', $this->User->username);
-                    View::set('password_reset_hash', $this->User->password_reset_hash);
+                    $this->set('username', $this->User->username);
+                    $this->set('password_reset_hash', $this->User->password_reset_hash);
                     return;
                 } else {
                     Session::setFlash('Your reset link has expired. Please try again.');

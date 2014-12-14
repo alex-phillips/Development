@@ -2,10 +2,10 @@
 
 $markup = '';
 
-if ($this->posts) {
-    foreach ($this->posts as $post) {
+if (isset($posts)) {
+    foreach ($posts as $post) {
         $edit_link = '';
-        if ($this->Session->read('Auth.role') === 'admin') {
+        if (Session::read('Auth.role') === 'admin') {
             $edit_link = '<a href="/posts/edit/' . $post->id . '">Edit</a>';
         }
         $date = $post->created->diffForHumans();
@@ -15,7 +15,7 @@ if ($this->posts) {
         }
 
         $admin_links = '';
-        if ($this->Session->read('Auth.role') === 'admin' || $this->Session->read('Auth.id') == $post->id_user) {
+        if (Session::read('Auth.role') === 'admin' || Session::read('Auth.id') == $post->id_user) {
             $admin_links = <<<__TEXT__
                 <br/><br/>
                 <a href="/posts/edit/$post->id">Edit</a> |

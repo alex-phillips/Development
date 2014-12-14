@@ -6,7 +6,7 @@
  * Time: 6:36 PM
  */
 
-class AppModel extends \Primer\Model\Model
+class AppModel extends \Primer\Data\Model
 {
 
 }

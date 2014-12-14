@@ -33,8 +33,8 @@ class PostsController extends AppController
             $params['no_publish'] = 0;
         }
 
-        View::set('title', 'Home');
-        View::set('posts', View::paginate('Post', array('AND' => $params)));
+        $this->set('title', 'Home');
+        $this->set('posts', View::paginate('Post', array('AND' => $params)));
     }
 
     public function my_posts()
@@ -48,17 +48,17 @@ class PostsController extends AppController
             $params['id_user'] = Session::read('Auth.id');
         }
 
-        View::set('posts', View::paginate(
+        $this->set('posts', View::paginate(
             'Post',
             array('id_user' => Session::read('Auth.id'))
         ));
-        View::set('title', 'My Posts');
+        $this->set('title', 'My Posts');
         View::render('posts.index');
     }
 
     public function add()
     {
-        View::set('title', 'New Post');
+        $this->set('title', 'New Post');
         View::addJS('posts/add');
 
         $form = Form::create('add');
@@ -106,16 +106,16 @@ class PostsController extends AppController
             }
         }
 
-        View::set('form', $form);
+        $this->set('form', $form);
     }
 
     public function view($id)
     {
         if (is_numeric($id)) {
-            $this->Post = $this->Post->findById($id);
+            $this->Post = Post::findById($id);
         }
         else {
-            $posts = $this->Post->find(array(
+            $posts = Post::find(array(
                 'conditions' => array(
                     'slug' => $id
                 )
@@ -132,7 +132,7 @@ class PostsController extends AppController
             Response::redirect('/posts/');
         }
 
-        View::set(
+        $this->set(
             array(
                 'post'     => $this->Post,
                 'title'    => $this->Post->title,
@@ -143,9 +143,8 @@ class PostsController extends AppController
 
     public function edit($id)
     {
-        View::set('title', 'Edit Post');
+        $this->set('title', 'Edit Post');
 
-        View::addJS('posts/edit');
         $this->Post = Post::findById($id);
 
         if (!$this->Post) {
@@ -209,8 +208,8 @@ class PostsController extends AppController
         }
 
         Primer::setJSValue('post', $this->Post);
-        View::set('form', $form);
-        View::set('post', $this->Post);
+        $this->set('form', $form);
+        $this->set('post', $this->Post);
     }
 
     public function delete($id = null)
@@ -220,7 +219,7 @@ class PostsController extends AppController
         $form->add('submit', 'btnsubmit', 'Delete Post');
 
         if ($form->validate() && Session::isAdmin()) {
-            if (PostdeleteById($id)) {
+            if (Post::deleteById($id)) {
                 Session::setFlash('Post has been successfully deleted', 'success');
                 Response::redirect('/');
             }
@@ -230,12 +229,14 @@ class PostsController extends AppController
             }
         }
         else if (Session::isAdmin()) {
-            View::set('post', Post::findById($id));
+            $this->set('post', Post::findById($id));
         }
         else {
             Session::setFlash('You are not authorized to delete posts', 'warning');
             Response::redirect('/');
         }
+
+        $this->set('form', $form);
     }
 
 }

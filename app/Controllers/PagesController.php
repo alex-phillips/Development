@@ -9,7 +9,7 @@ class PagesController extends AppController
     public function movies()
     {
         if (isset($_REQUEST['ajax'])) {
-            View::set('template', 'ajax');
+            $this->set('template', 'ajax');
             $movies = file_get_contents(APP_ROOT . '/public/content/movies.json');
             $movies = json_decode($movies);
 
@@ -43,6 +43,7 @@ class PagesController extends AppController
                         </div>
                         <hr/>
 __TEXT__;
+
                 }
 
             }
@@ -50,11 +51,11 @@ __TEXT__;
                 $markup = '<h2>No results found</h2>';
             }
 
-            View::set('content', $markup);
+            $this->set('content', $markup);
         }
         else {
             View::addJS('pages/movies');
-            View::set('title', 'Movies');
+            $this->set('title', 'Movies');
         }
     }
 }

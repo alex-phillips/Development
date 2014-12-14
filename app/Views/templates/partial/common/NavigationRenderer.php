@@ -14,6 +14,12 @@ class NavigationRenderer
             '<span class="glyphicon glyphicon-film hidden-xs">&nbsp;</span>Movies' => '/movies/',
         ),
         'right_nav' => array(
+            '{{Wedding}}' => array(
+                'Invited' => '/invitees/',
+                'Uninvited' => '/invitees/uninvited/',
+                'Add Invitee' => '/invitees/add/',
+                'Summary' => '/invitees/summary/',
+            ),
             '{{username}}' => array(
                 'View Account' => '/users/view/{{username}}',
                 'Edit Account' => '/users/edit/',
@@ -111,7 +117,6 @@ __TEXT__;
         switch($string) {
             case 'username':
                 if (Session::isUserLoggedIn()) {
-//                if ($Session->isUserLoggedIn()) {
                     $retval = Session::read('Auth.username');
                 }
                 break;
@@ -125,6 +130,10 @@ __TEXT__;
                     $retval = $string;
                 }
                 break;
+            case 'Wedding':
+                if (Session::isUserLoggedIn()) {
+                    $retval = $string;
+                }
         }
 
         return $retval;

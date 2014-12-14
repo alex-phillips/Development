@@ -4,7 +4,7 @@
 
 <?php
 
-echo $this->post->title;
-echo $this->post->body;
+echo $post->title;
+echo $post->body;
 
-$this->form->render();
+$form->render();

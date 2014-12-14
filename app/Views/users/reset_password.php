@@ -4,7 +4,7 @@
 Form::create('users');
 Form::add('username', array(
     'type' => 'hidden',
-    'value' => $this->username
+    'value' => $username
 ));
 Form::add('password_reset_hash', array(
     'type' => 'hidden',

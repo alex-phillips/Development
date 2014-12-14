@@ -4,7 +4,7 @@
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui">
         <title>
-            <?php echo Config::get('app.site_name') ?> | <?php echo $this->title ?>
+            <?php echo Config::get('app.site_name') ?> | <?php echo $title ?>
         </title>
         <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"/>
 
