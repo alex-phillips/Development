@@ -6,18 +6,21 @@
  * Date: 9/28/14
  * Time: 9:46 AM
  */
-class PullSpotifyFeedCommand extends \Primer\Console\BaseCommand
+class PullSpotifyFeedCommand extends \Primer\Console\Command\BaseCommand
 {
     public function configure()
     {
         $this->setName('spotify:pull_feed');
         $this->setDescription("Pull Spotify feed from Last.FM based on provided username");
-        $this->addParameter('u', 'username', \Primer\Console\Input\DefinedInput::VALUE_REQUIRED);
+        $this->addArgument('username', \Primer\Console\Input\DefinedInput::VALUE_REQUIRED);
     }
 
     public function run()
     {
-        $username = $this->getParameterValue('username');
+        if (!$username = $this->args->getArgument('username')) {
+            exit;
+        }
+
         Log::info("Pulling Spotify feed for $username");
 
         $music_feed = array();
