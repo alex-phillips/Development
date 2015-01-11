@@ -17,9 +17,7 @@ class PullSpotifyFeedCommand extends \Primer\Console\Command\BaseCommand
 
     public function run()
     {
-        if (!$username = $this->args->getArgument('username')) {
-            exit;
-        }
+        $username = $this->args->getArgument('username');
 
         Log::info("Pulling Spotify feed for $username");
 
