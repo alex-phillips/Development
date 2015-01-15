@@ -15,8 +15,6 @@ define('DS', DIRECTORY_SEPARATOR);
 define('APP_ROOT', dirname(dirname(__FILE__)));
 set_include_path(APP_ROOT);
 
-//define('ENVIRONMENT', 'test');
-
 /**
  * Configuration for: Timezone
  */
