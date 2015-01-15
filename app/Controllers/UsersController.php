@@ -43,7 +43,7 @@ class UsersController extends AppController
         $form->submit('btnsubmit', 'Login');
 
         if ($form->validate()) {
-            $this->User = $this->User->findFirst(array(
+            $this->User = User::findFirst(array(
                     'conditions' => array(
                         'username' => Request::post()->get('username'),
                     ),
