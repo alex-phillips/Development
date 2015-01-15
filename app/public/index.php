@@ -6,5 +6,5 @@
  * @license http://opensource.org/licenses/MIT MIT License
  */
 
-$app = require_once('../Config/start.php');
+$app = require_once('../start/global.php');
 $app->run();
