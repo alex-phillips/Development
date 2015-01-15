@@ -1,10 +1,11 @@
 define([
     'jquery',
     'underscore',
-    'bootstrap',
+    //'bootstrap',
     'mmenu',
-    'vendor/jquery_plugins/unveil',
-    'prism'
+    'unveil',
+    'prism',
+    'forms'
 ], function ($, _) {
     'use strict';
 
