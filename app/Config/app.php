@@ -2,22 +2,18 @@
 
 /**
  * THIS IS THE CONFIGURATION FILE
- *
- * For more info about constants please @see http://php.net/manual/en/function.define.php
- * If you want to know why we use "define" instead of "const" @see http://stackoverflow.com/q/2447791/1114320
  */
 
 /**
  * Site-specific values
  */
-define('LOG_PATH', APP_ROOT . '/logs/');
 
 return array(
 
     /*
      * Site name - can be used throughout the framework to reference
      */
-    'site_name'       => 'Primer',
+    'site_name'       => 'Wootables',
 
     /*
      * Envirnoment - this determines which database
