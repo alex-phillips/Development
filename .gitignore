@@ -14,3 +14,5 @@ app/logs
 composer.lock
 app/vendor
 app/public/components
+
+.idea
