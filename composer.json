@@ -2,11 +2,7 @@
     "name": "exonintrendo/mvc",
     "require": {
         "exonintrendo/primer": "dev-master",
-        "erusev/parsedown": "dev-master"
-    },
-    "require-dev": {
-        "exonintrendo/primer": "dev-master",
-        "erusev/parsedown": "dev-master"
+        "erusev/parsedown": "dev-master",
     },
     "authors": [
         {
